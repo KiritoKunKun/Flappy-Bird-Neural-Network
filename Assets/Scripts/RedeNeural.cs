@@ -51,6 +51,10 @@ public class RedeNeural {
             return Matrix.sigmoid((float)output.data[(int)i][(int)j]);
         });
 
-        Debug.Log(output.data[0][0]);
+        for (int i = 0; i < output.rows; i++) {
+            for (int j = 0; j < output.cols; j++) {
+                Debug.Log(output.data[i][j]);
+            }
+        }
     }
 }

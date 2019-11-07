@@ -6,8 +6,8 @@ using UnityEngine;
 
 public class Matrix {
     
-    private int rows;
-    private int cols;
+    public int rows;
+    public int cols;
     public double[][] data;
 
     public Matrix (int rows, int cols) {
