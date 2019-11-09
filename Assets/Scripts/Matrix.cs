@@ -28,18 +28,28 @@ public class Matrix {
         }
     }
 
-    public static Matrix arrayToMatrix(double[,] arr) {
+    public static Matrix arrayToMatrix(double[] arr) {
         Matrix matrix = new Matrix(arr.Length, 1);
-
-        map(matrix, (num, i, j) => {
-            return arr[(int)j, (int) i];
+        matrix.map((num, i, j) => {
+            return arr[(int)j];
         });
 
         return matrix;
     }
 
+    public static double[] matrixToArray(Matrix m) {
+        List<double> arr = new List<double>();
+
+        m.map((num, i, j) => {
+            arr.Add(num);
+            return arr[arr.Count - 1];
+        });
+
+        return arr.ToArray();
+    }
+
     public void randomize() {
-        map(this, (num, i, j) => {
+        this.map((num, i, j) => {
             return UnityEngine.Random.Range(0f, 1f);
         });
     }
@@ -47,7 +57,7 @@ public class Matrix {
     public static Matrix map(Matrix m, Func<double, double, double, double> func) {
         Matrix matrix = new Matrix(m.rows, m.cols);
 
-        matrix.data = matrix.data.Select((arr, i) => {
+        matrix.data = m.data.Select((arr, i) => {
             return arr.Select((num, j) => {
                 return func(num, i, j);
             }).ToArray();
@@ -66,10 +76,48 @@ public class Matrix {
         return this;
     }
 
+    public static Matrix transpose(Matrix a) {
+        Matrix matrix = new Matrix(a.cols, a.rows);
+        matrix.map((num, i, j) => {
+            return a.data[(int)j][(int)i];
+        });
+
+        return matrix;
+    }
+
+    //Escalar Multiply
+    public static Matrix escalarMultiply(Matrix a, double escalar) {
+        Matrix matrix = new Matrix(a.rows, a.cols);
+        matrix.map((num, i, j) => {
+            return a.data[(int)i][(int)j] * escalar;
+        });
+
+        return matrix;
+    }
+
+    //Hadamard
+    public static Matrix hadamard(Matrix a, Matrix b) {
+        Matrix matrix = new Matrix(a.rows, a.cols);
+        matrix.map((num, i, j) => {
+            return a.data[(int)i][(int)j] * b.data[(int)i][(int)j];
+        });
+
+        return matrix;
+    }
+
     public static Matrix add(Matrix a, Matrix b) {
-        Matrix matrix = new Matrix(a.rows, b.cols);
-        map(matrix, (num, i, j) => {
+        Matrix matrix = new Matrix(a.rows, a.cols);
+        matrix.map((num, i, j) => {
             return a.data[(int)i][(int)j] + b.data[(int)i][(int)j];
+        });
+
+        return matrix;
+    }
+
+    public static Matrix subtract(Matrix a, Matrix b) {
+        Matrix matrix = new Matrix(a.rows, a.cols);
+        matrix.map((num, i, j) => {
+            return a.data[(int)i][(int)j] - b.data[(int)i][(int)j];
         });
 
         return matrix;
@@ -78,11 +126,11 @@ public class Matrix {
     public static Matrix multiply (Matrix a, Matrix b) {
         Matrix matrix = new Matrix(a.rows, b.cols);
 
-        map(matrix, (num, i, j) => {
+        matrix.map((num, i, j) => {
             double sum = 0;
             
             for (int k = 0; k < a.cols; k++) {
-                //HERE
+                
                 double elm1 = a.data[(int)i][k];
                 double elm2 = b.data[k][(int)j];
 
@@ -93,9 +141,5 @@ public class Matrix {
         });
 
         return matrix;
-    }
-
-    public static double sigmoid (float x) {
-        return 1 / (1 + Mathf.Exp(-x));
     }
 }
