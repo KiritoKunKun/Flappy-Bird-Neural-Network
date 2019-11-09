@@ -60,13 +60,6 @@ public class RedeNeural {
             return sigmoid(output.data[(int)i][(int)j]);
         });
 
-        if (target[0] == 0) {
-            Debug.ClearDeveloperConsole();
-            Debug.Log(output.data[0][0]);
-        } else {
-            // Debug.Log(output.data[0][0]);
-        }
-
         //BACKPROPAGATION
 
         //OUTPUT -> HIDDEN
