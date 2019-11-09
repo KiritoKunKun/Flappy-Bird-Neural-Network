@@ -31,66 +31,33 @@ public class GameManager : MonoBehaviour {
         inputs = new double[][]
         {
             new double[] { 0, 0},
+            new double[] { 0, 1},
+            new double[] { 1, 0},
             new double[] { 1, 1}
         };
 
         outputs = new double[][] 
         { 
             new double[] {0},
-            new double[] {1}
+            new double[] {1},
+            new double[] {1},
+            new double[] {0}
         };
-
-        // for (int i = 0; i < 1000; i++) {
-        //     int index = Random.Range(0, 1);
-        //     nn.train(inputs[index], outputs[index]);
-        // }
-
-        // if (nn.predict(new double[] {1, 1})[0] < 0.04) {
-        //     Debug.Log("BOAAA");
-        // }
-
-        // for (int i = 0; i < 1000; i++) {
-        //     int index = Random.Range(1, 2);
-        //     nn.train(inputs[index], outputs[index]);
-        // }
-
-        // if (nn.predict(new double[] {0, 1})[0] > 0.98) {
-        //     Debug.Log("BOAAA");
-        // }
     }
 
     // Update is called once per frame
     void Update() {
         for (int i = 0; i < 100; i++) {
-            int index = -1;
-
-            if (player.position.x < transform.position.x) {
-                index = 0;
-            } else {
-                index = 1;
-            }
-
+            int index = Random.Range(0, 4);
             nn.train(inputs[index], outputs[index]);
-        }
-        
-        if (nn.predict(new double[] {0, 0})[0] < 0.5f) {
-            player.GetComponent<Player>().MoveLeft();
-        } else {
-            player.GetComponent<Player>().MoveRight();
-        }
-
-        if (nn.predict(new double[] {1, 1})[0] > 0.5f) {
-            player.GetComponent<Player>().MoveRight();
-        } else {
-            player.GetComponent<Player>().MoveLeft();
         }
 
         // Debug.Log(nn.predict(new double[] {0, 0})[0]);
 
-        // if (nn.predict(new double[] {0, 0})[0] < 0.04 && nn.predict(new double[] {1, 0})[0] > 0.98) {
-        //     train = false;
-        //     Debug.Log("Terminou!");
-        // }
+        if (nn.predict(new double[] {0, 0})[0] < 0.04 && nn.predict(new double[] {1, 0})[0] > 0.98) {
+            train = false;
+            Debug.Log("Terminou!");
+        }
         
         // if (canTrain) {
         //     //StartCoroutine("invokeTrain");
