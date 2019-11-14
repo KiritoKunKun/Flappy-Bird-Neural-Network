@@ -8,11 +8,11 @@ public class GameManager : MonoBehaviour {
     private bool canTrain;
     private bool canShowProgress;
 
-    private double[][] inputs;
+    private double[,] inputs;
 
-    private double[][] outputs;
+    private double[] outputs;
 
-    private RedeNeural nn;
+    //private RedeNeural nn;
 
     public Transform player;
 
@@ -24,32 +24,26 @@ public class GameManager : MonoBehaviour {
         canTrain = true;
         canShowProgress = true;
 
-        nn = new RedeNeural(2, 3, 1);
+        //nn = new RedeNeural(2, 3, 1);
 
         //XOR Problem
         
-        inputs = new double[][]
+        inputs = new double[,]
         {
-            new double[] { 0, 0},
-            new double[] { 0, 1},
-            new double[] { 1, 0},
-            new double[] { 1, 1}
+            { 0, 0},
+            { 0, 1},
+            { 1, 0},
+            { 1, 1}
         };
 
-        outputs = new double[][] 
-        { 
-            new double[] {0},
-            new double[] {1},
-            new double[] {1},
-            new double[] {0}
-        };
+        outputs = new double[] { 0, 1, 1, 0};
     }
 
     // Update is called once per frame
     void Update() {
-        for (int i = 0; i < 100; i++) {
+        /*for (int i = 0; i < 100; i++) {
             int index = Random.Range(0, 4);
-            nn.train(inputs[index], outputs[index]);
+            nn.train(new double[] { inputs[index, 0], inputs[index, 1]}, outputs[index]);
         }
 
         // Debug.Log(nn.predict(new double[] {0, 0})[0]);
@@ -57,7 +51,7 @@ public class GameManager : MonoBehaviour {
         if (nn.predict(new double[] {0, 0})[0] < 0.04 && nn.predict(new double[] {1, 0})[0] > 0.98) {
             train = false;
             Debug.Log("Terminou!");
-        }
+        }*/
         
         // if (canTrain) {
         //     //StartCoroutine("invokeTrain");
