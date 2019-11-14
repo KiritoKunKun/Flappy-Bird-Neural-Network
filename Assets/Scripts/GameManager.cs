@@ -45,14 +45,14 @@ public class GameManager : MonoBehaviour {
         };
 
 		for (int i = 0; i < 5000; i++) {
-			for (int index = 0; index < 4; index ++) {
+			for (int index = 0; index < 2; index ++) {
 				nn.train(inputs[index], outputs[index]);
 			}
 		}
 
 		for (int i = 0; i < 4; i++) {
-			Debug.Log(nn.predict(new double[] { 0, 0 })[0]);
-			Debug.Log(nn.predict(inputs[2])[0]);
+			Debug.Log("0 = " + nn.predict(new double[] { 0, 0 })[0]);
+			Debug.Log("1 = " + nn.predict(inputs[3])[0]);
 		}
 	}
 
