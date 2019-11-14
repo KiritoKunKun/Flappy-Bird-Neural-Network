@@ -31,7 +31,7 @@ public class Matrix {
     public static Matrix arrayToMatrix(double[] arr) {
         Matrix matrix = new Matrix(arr.Length, 1);
         matrix.map((num, i, j) => {
-            return arr[(int)j];
+            return arr[(int)i]; //HERE #############
         });
 
         return matrix;

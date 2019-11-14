@@ -60,7 +60,7 @@ public class RedeNeural {
             return sigmoid(output.data[(int)i][(int)j]);
         });
 
-        Debug.Log(output.data[0][0]);
+        //Debug.Log(output.data[0][0]);
 
         //BACKPROPAGATION
 
@@ -72,16 +72,16 @@ public class RedeNeural {
         });
 
         //CORRECOES DOS PESOS
-        Matrix hidden_T = Matrix.transpose(hidden);
 
         Matrix gradient = Matrix.hadamard(d_output, output_error);
         gradient = Matrix.escalarMultiply(gradient, learning_rate);
 
         //Ajust Bias O -> H
         this.bias_ho = Matrix.add(this.bias_ho, gradient);
-        
-        //Ajust Weights O -> H
-        Matrix weights_ho_deltas = Matrix.multiply(gradient, hidden_T);
+
+		//Ajust Weights O -> H
+		Matrix hidden_T = Matrix.transpose(hidden);
+		Matrix weights_ho_deltas = Matrix.multiply(gradient, hidden_T);
         this.weights_ho = Matrix.add(this.weights_ho, weights_ho_deltas);
 
         //HIDDEN -> INPUT

@@ -43,14 +43,21 @@ public class GameManager : MonoBehaviour {
             new double[] {1},
             new double[] {0}
         };
-    }
+
+		for (int i = 0; i < 5000; i++) {
+			for (int index = 0; index < 4; index ++) {
+				nn.train(inputs[index], outputs[index]);
+			}
+		}
+
+		for (int i = 0; i < 4; i++) {
+			Debug.Log(nn.predict(new double[] { 0, 0 })[0]);
+			Debug.Log(nn.predict(inputs[2])[0]);
+		}
+	}
 
     // Update is called once per frame
     void Update() {
-        for (int i = 0; i < 100; i++) {
-            int index = Random.Range(0, 4);
-            nn.train(inputs[index], outputs[index]);
-        }
 
         // Debug.Log(nn.predict(new double[] {0, 0})[0]);
 
