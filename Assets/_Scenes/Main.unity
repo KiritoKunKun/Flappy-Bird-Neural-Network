@@ -542,7 +542,7 @@ MonoBehaviour:
   train: 0
   pipePrefab: {fileID: 786251844066419273, guid: adebbc2f9daa8e44a9089aea50795a77,
     type: 3}
-  player: {fileID: 613906653}
+  player: {fileID: 1201130398987387959}
   pipesTransform: {fileID: 1242168384}
 --- !u!4 &1457832167
 Transform:
@@ -831,3 +831,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4f501c8eb6fad8a479cb95a08a49c915, type: 3}
+--- !u!1 &1201130398987387959 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1201130398508547306, guid: 4f501c8eb6fad8a479cb95a08a49c915,
+    type: 3}
+  m_PrefabInstance: {fileID: 1201130398987387958}
+  m_PrefabAsset: {fileID: 0}

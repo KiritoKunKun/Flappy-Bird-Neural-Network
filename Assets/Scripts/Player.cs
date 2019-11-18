@@ -8,6 +8,8 @@ public class Player : MonoBehaviour {
     public float distance;
     public int generation;
     public float jumpForce;
+
+    private float jumpTimer;
     
     protected float fallMultiplier = 7.5f;
 	protected float lowJumpMultiplier = 5f;
@@ -23,7 +25,7 @@ public class Player : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
-        gameManager.player = transform;
+        jumpTimer = 0;
         distance = 0;
     }
 
@@ -31,15 +33,23 @@ public class Player : MonoBehaviour {
     void Update() {
         distance += Time.deltaTime;
         SetGravity();
-        Jump();
         SetVelocity();
     }
 
     public void Jump() {
-        if (Input.GetKeyDown(KeyCode.Space)) {
-            rb.velocity += new Vector2(rb.velocity.x, 0);
-			rb.velocity += Vector2.up * jumpForce;
-        }
+        // if (Input.GetKeyDown(KeyCode.Space)) {
+            jumpTimer += Time.deltaTime;
+
+            if (jumpTimer > 0.1f) {
+                if (transform.position.y < 4) {
+                    rb.velocity += new Vector2(rb.velocity.x, 0);
+                    rb.velocity += Vector2.up * jumpForce;
+                }
+
+                jumpTimer = 0;
+            }
+            Debug.Log(jumpTimer);
+        // }
     }
 
     private void SetGravity() {
@@ -68,7 +78,7 @@ public class Player : MonoBehaviour {
                 PlayerPrefs.SetFloat("Distance", distance);
             }
 
-            SceneManager.LoadScene("Main");
+            distance = 0f;
         }
     }
 }

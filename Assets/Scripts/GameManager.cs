@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour {
 
     public GameObject pipePrefab;
 
-    public Transform player;
+    public GameObject player;
     public Transform pipesTransform;
     public static List<GameObject> pipes = new List<GameObject>();
 
@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour {
     void Start() {
         gameSpeed = 10f;
         train = true;
-        timer = 0f;
+        timer = 2f;
 
         nn = new RedeNeural(2, 3, 1);
 
@@ -84,9 +84,16 @@ public class GameManager : MonoBehaviour {
                 new double[] {0}
             };
 
-            nn.train(new double[] {distX, distY}, new double[] {0});
+            int output = 0;
+            if (distX < 1f && distY > 1f || distY < 1f) {
+                output = 1;
+            }
+
+            nn.train(new double[] {distX, distY}, new double[] {output});
 
             if (nn.predict(new double[] {distX, distY})[0] > 0.0) {
+                player.GetComponent<Player>().Jump();
+            } else if (player.transform.position.y < -4) {
                 player.GetComponent<Player>().Jump();
             }
         }
