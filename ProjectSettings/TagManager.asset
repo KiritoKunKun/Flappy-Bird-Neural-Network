@@ -4,9 +4,10 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - BallGenerator
   - Void
   - GameManager
+  - Pipe
+  - RemovePipe
   layers:
   - Default
   - TransparentFX

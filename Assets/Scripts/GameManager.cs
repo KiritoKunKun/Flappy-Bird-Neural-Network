@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour {
 
+    public static float gameSpeed;
+
     public bool train;
-    private bool canTrain;
-    private bool canShowProgress;
+
+    private float timer;
 
     private double[][] inputs;
 
@@ -14,15 +16,17 @@ public class GameManager : MonoBehaviour {
 
     private RedeNeural nn;
 
-    public Transform player;
+    public GameObject pipePrefab;
 
-    public BallGenerator ballGenerator;
+    public Transform player;
+    public Transform pipesTransform;
+    public static List<GameObject> pipes = new List<GameObject>();
 
     // Start is called before the first frame update
     void Start() {
+        gameSpeed = 10f;
         train = true;
-        canTrain = true;
-        canShowProgress = true;
+        timer = 0f;
 
         nn = new RedeNeural(2, 3, 1);
 
@@ -44,70 +48,67 @@ public class GameManager : MonoBehaviour {
             new double[] {0}
         };
 
-		for (int i = 0; i < 5000; i++) {
-			for (int index = 0; index < 2; index ++) {
-				nn.train(inputs[index], outputs[index]);
-			}
-		}
+		// for (int i = 0; i < 5000; i++) {
+		// 	for (int index = 0; index < 2; index ++) {
+		// 		nn.train(inputs[index], outputs[index]);
+		// 	}
+		// }
 
-		for (int i = 0; i < 4; i++) {
-			Debug.Log("0 = " + nn.predict(new double[] { 0, 0 })[0]);
-			Debug.Log("1 = " + nn.predict(inputs[3])[0]);
-		}
+		// for (int i = 0; i < 4; i++) {
+		// 	Debug.Log("0 = " + nn.predict(new double[] { 0, 0 })[0]);
+		// 	Debug.Log("1 = " + nn.predict(inputs[3])[0]);
+		// }
 	}
 
     // Update is called once per frame
     void Update() {
+        GeneratePipes();
 
-        // Debug.Log(nn.predict(new double[] {0, 0})[0]);
+        if (pipes.Count > 0) {
+            double distX = pipes[0].transform.position.x - player.transform.position.x;
+            double distY = pipes[0].transform.position.y - player.transform.position.y;
 
-        if (nn.predict(new double[] {0, 0})[0] < 0.04 && nn.predict(new double[] {1, 0})[0] > 0.98) {
-            train = false;
-            Debug.Log("Terminou!");
+            inputs = new double[][]
+            {
+                new double[] { 0, 0},
+                new double[] { 0, 1},
+                new double[] { 1, 0},
+                new double[] { 1, 1}
+            };
+
+            outputs = new double[][] 
+            { 
+                new double[] {0},
+                new double[] {1},
+                new double[] {1},
+                new double[] {0}
+            };
+
+            nn.train(new double[] {distX, distY}, new double[] {0});
+
+            if (nn.predict(new double[] {distX, distY})[0] > 0.0) {
+                player.GetComponent<Player>().Jump();
+            }
         }
-        
-        // if (canTrain) {
-        //     //StartCoroutine("invokeTrain");
-        // } else {
-        //     StopCoroutine("invokeTrain");
-        //     canTrain = true;
-        // }
 
-        // if (canShowProgress) {
-        //     //StartCoroutine("showTrainProgress");
-        // } else { 
-        //     StopCoroutine("showTrainProgress");
-        //     canShowProgress = true;
+        // if (nn.predict(new double[] {0, 0})[0] < 0.04 && nn.predict(new double[] {1, 0})[0] > 0.98) {
+        //     train = false;
+        //     Debug.Log("Terminou!");
         // }
     }
 
-    // IEnumerator invokeTrain() {
-    //     yield return new WaitForSeconds(1f);
-        
-    //     if (train) {
-    //         for (int i = 0; i < 1000; i++) {
-    //             int index = Random.Range(0, 4);
-    //             nn.train(inputs[index], outputs[index]);
-    //         }
+    private void GeneratePipes() {
+        timer += Time.deltaTime;
 
-    //         if (nn.predict(new double[] {0, 0})[0] < 0.04 && nn.predict(new double[] {1, 0})[0] > 0.98) {
-    //             train = false;
-    //             Debug.Log("Terminou!");
-    //         }
-    //     }
+        if (timer > 2f) {
+            GameObject pipe = Instantiate(pipePrefab);
+            pipe.transform.parent = pipesTransform;
 
-    //     canTrain = false;
-    // }
+            float rndY = Random.Range(-2f, 2f);
+            pipe.transform.position = new Vector3(10, rndY, 0);
+            pipes.Add(pipe);
 
-    // IEnumerator showTrainProgress() {
-    //     yield return new WaitForSeconds(2f);
-        
-    //     if (train) {
-    //         int index = Random.Range(0, 4);
-    //         nn.train(inputs[index], outputs[index]);
-    //         Debug.Log(nn.predict(new double[] {0, 0})[0]);
-    //     }
-
-    //     canShowProgress = false;
-    // }
+            timer = 0f;
+        }
+    }
 }
