@@ -48,7 +48,6 @@ public class Player : MonoBehaviour {
 
                 jumpTimer = 0;
             }
-            Debug.Log(jumpTimer);
         // }
     }
 
@@ -79,6 +78,8 @@ public class Player : MonoBehaviour {
             }
 
             distance = 0f;
+
+            gameManager.RestartGame();
         }
     }
 }

@@ -103,6 +103,7 @@ public class RedeNeural {
         this.weights_ih = Matrix.add(this.weights_ih, weights_ih_deltas);
     }
 
+    //Calculates output and return a output value
     public double[] predict(double[] arr) {
         //INPUT -> HIDDEN
         Matrix input = Matrix.arrayToMatrix(arr);

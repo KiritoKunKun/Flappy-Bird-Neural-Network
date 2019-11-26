@@ -68,40 +68,16 @@ public class GameManager : MonoBehaviour {
             double distX = pipes[0].transform.position.x - player.transform.position.x;
             double distY = pipes[0].transform.position.y - player.transform.position.y;
 
-            inputs = new double[][]
-            {
-                new double[] { 0, 0},
-                new double[] { 0, 1},
-                new double[] { 1, 0},
-                new double[] { 1, 1}
-            };
+            double[] input = new double[2];
+            double[] output = new double[1];
 
-            outputs = new double[][] 
-            { 
-                new double[] {0},
-                new double[] {1},
-                new double[] {1},
-                new double[] {0}
-            };
-
-            int output = 0;
-            if (distX < 1f && distY > 1f || distY < 1f) {
-                output = 1;
-            }
-
-            nn.train(new double[] {distX, distY}, new double[] {output});
-
-            if (nn.predict(new double[] {distX, distY})[0] > 0.0) {
-                player.GetComponent<Player>().Jump();
-            } else if (player.transform.position.y < -4) {
+            input[0] = distX;
+            input[1] = distY;
+            
+            if (nn.predict(input)[0] > 0.0d) {
                 player.GetComponent<Player>().Jump();
             }
         }
-
-        // if (nn.predict(new double[] {0, 0})[0] < 0.04 && nn.predict(new double[] {1, 0})[0] > 0.98) {
-        //     train = false;
-        //     Debug.Log("Terminou!");
-        // }
     }
 
     private void GeneratePipes() {
@@ -117,5 +93,14 @@ public class GameManager : MonoBehaviour {
 
             timer = 0f;
         }
+    }
+
+    public void RestartGame() {
+        for (int i = 0; i < pipes.Count; i++) {
+            Destroy(pipes[i]);
+            i--;
+        }
+
+        player.transform.position = new Vector3(-7, 0, 0);
     }
 }
