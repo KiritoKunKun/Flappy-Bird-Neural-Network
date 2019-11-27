@@ -5,6 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour {
 
+    public RedeNeural nn;
+
     public float distance;
     public int generation;
     public float jumpForce;
@@ -13,6 +15,8 @@ public class Player : MonoBehaviour {
     
     protected float fallMultiplier = 7.5f;
 	protected float lowJumpMultiplier = 5f;
+
+    public bool canMove;
 
     private Rigidbody2D rb;
 
@@ -25,15 +29,20 @@ public class Player : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
+        nn = new RedeNeural(2, 3, 1);
+
         jumpTimer = 0;
         distance = 0;
+        canMove = true;
     }
 
     // Update is called once per frame
     void Update() {
-        distance += Time.deltaTime;
-        SetGravity();
-        SetVelocity();
+        if (canMove) {
+            distance += Time.deltaTime;
+            SetGravity();
+            SetVelocity();
+        }
     }
 
     public void Jump() {
@@ -71,15 +80,20 @@ public class Player : MonoBehaviour {
         if (coll.transform.parent.tag == "Pipe") {
             if (PlayerPrefs.HasKey("Distance")) {
                 if (PlayerPrefs.GetFloat("Distance") < distance) {
+                    gameManager.bestBird = nn;
+
                     PlayerPrefs.SetFloat("Distance", distance);
                 }
             } else {
                 PlayerPrefs.SetFloat("Distance", distance);
             }
 
-            distance = 0f;
+            gameManager.birdsCount++;
+            if (gameManager.birdsCount == 100) {
+                gameManager.RestartGame();
+            }
 
-            gameManager.RestartGame();
+            GetComponent<SpriteRenderer>().enabled = false;
         }
     }
 }

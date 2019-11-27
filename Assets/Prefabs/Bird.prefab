@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 1201130398987387961}
   - component: {fileID: 1201130398987387960}
   m_Layer: 0
-  m_Name: Player
+  m_Name: Bird
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -59,7 +59,6 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -95,9 +94,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06abae8d0d1523b419d05b7d027c716f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  score: 0
-  losses: 0
+  distance: 0
   generation: 0
+  jumpForce: 50
+  canMove: 0
 --- !u!50 &1201130398987387961
 Rigidbody2D:
   serializedVersion: 4

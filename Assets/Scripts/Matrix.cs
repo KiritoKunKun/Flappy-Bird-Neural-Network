@@ -49,9 +49,19 @@ public class Matrix {
     }
 
     public void randomize() {
-        this.map((num, i, j) => {
+        map((num, i, j) => {
             return UnityEngine.Random.Range(0f, 1f);
         });
+    }
+
+    public static Matrix randomizeWeights(Matrix m) {
+        Matrix mTemp = m;
+
+        mTemp.map((num, i, j) => {
+            return UnityEngine.Random.Range(0f, 1f);
+        });
+
+        return multiply(m, mTemp);
     }
 
     public static Matrix map(Matrix m, Func<double, double, double, double> func) {

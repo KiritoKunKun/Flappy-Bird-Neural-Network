@@ -10,11 +10,11 @@ public class RedeNeural {
     private int o_nodes;
     private double learning_rate;
 
-    Matrix bias_ih;
-    Matrix bias_ho;
+    public Matrix bias_ih;
+    public Matrix bias_ho;
 
-    Matrix weights_ih;
-    Matrix weights_ho;
+    public Matrix weights_ih;
+    public Matrix weights_ho;
 
     public RedeNeural (int i_nodes, int h_nodes, int o_nodes) {
         this.i_nodes = i_nodes;
@@ -47,15 +47,15 @@ public class RedeNeural {
     public void train(double[] arr, double[] target) {
         //INPUT -> HIDDEN
         Matrix input = Matrix.arrayToMatrix(arr);
-        Matrix hidden = Matrix.multiply(this.weights_ih, input);
-        hidden = Matrix.add(hidden, this.bias_ih);
+        Matrix hidden = Matrix.multiply(weights_ih, input);
+        hidden = Matrix.add(hidden, bias_ih);
         hidden.map((num, i, j) => {
             return sigmoid(hidden.data[(int)i][(int)j]);
         });
         
         //HIDDEN -> OUTPUT
-        Matrix output = Matrix.multiply(this.weights_ho, hidden);
-        output = Matrix.add(output, this.bias_ho);
+        Matrix output = Matrix.multiply(weights_ho, hidden);
+        output = Matrix.add(output, bias_ho);
         output.map((num, i, j) => {
             return sigmoid(output.data[(int)i][(int)j]);
         });
@@ -77,15 +77,15 @@ public class RedeNeural {
         gradient = Matrix.escalarMultiply(gradient, learning_rate);
 
         //Ajust Bias O -> H
-        this.bias_ho = Matrix.add(this.bias_ho, gradient);
+        bias_ho = Matrix.add(bias_ho, gradient);
 
 		//Ajust Weights O -> H
 		Matrix hidden_T = Matrix.transpose(hidden);
 		Matrix weights_ho_deltas = Matrix.multiply(gradient, hidden_T);
-        this.weights_ho = Matrix.add(this.weights_ho, weights_ho_deltas);
+        weights_ho = Matrix.add(weights_ho, weights_ho_deltas);
 
         //HIDDEN -> INPUT
-        Matrix weights_ho_T = Matrix.transpose(this.weights_ho);
+        Matrix weights_ho_T = Matrix.transpose(weights_ho);
         Matrix hidden_error = Matrix.multiply(weights_ho_T, output_error);
         Matrix d_hidden = Matrix.map(hidden, (num, i, j) => {
             return dsigmoid(hidden.data[(int)i][(int)j]);
@@ -96,11 +96,11 @@ public class RedeNeural {
         gradient_H = Matrix.escalarMultiply(gradient_H, learning_rate);
 
         //Ajust Bias O -> H
-        this.bias_ih = Matrix.add(this.bias_ih, gradient_H);
+        bias_ih = Matrix.add(bias_ih, gradient_H);
 
         //Ajust Bias H -> I
         Matrix weights_ih_deltas = Matrix.multiply(gradient_H, input_T);
-        this.weights_ih = Matrix.add(this.weights_ih, weights_ih_deltas);
+        weights_ih = Matrix.add(weights_ih, weights_ih_deltas);
     }
 
     //Calculates output and return a output value
@@ -108,15 +108,15 @@ public class RedeNeural {
         //INPUT -> HIDDEN
         Matrix input = Matrix.arrayToMatrix(arr);
 
-        Matrix hidden = Matrix.multiply(this.weights_ih, input);
-        hidden = Matrix.add(hidden, this.bias_ih);
+        Matrix hidden = Matrix.multiply(weights_ih, input);
+        hidden = Matrix.add(hidden, bias_ih);
         hidden.map((num, i, j) => {
             return sigmoid(hidden.data[(int)i][(int)j]);
         });
 
         //HIDDEN -> OUTPUT
-        Matrix output = Matrix.multiply(this.weights_ho, hidden);
-        output = Matrix.add(output, this.bias_ho);
+        Matrix output = Matrix.multiply(weights_ho, hidden);
+        output = Matrix.add(output, bias_ho);
         output.map((num, i, j) => {
             return sigmoid(output.data[(int)i][(int)j]);
         });
