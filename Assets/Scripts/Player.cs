@@ -118,6 +118,7 @@ public class Player : MonoBehaviour {
 
 		if (coll.transform.tag == "Point") {
 			score++;
+			gameManager.DisplayScore();
 		}
 	}
 }
