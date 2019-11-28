@@ -50,24 +50,25 @@ public class Matrix {
 
     public void randomize() {
         map((num, i, j) => {
-            return UnityEngine.Random.Range(0f, 1f);
+            return UnityEngine.Random.Range(-1000f, 1000f);
         });
     }
 
-    public static Matrix mutation(Matrix a, Matrix b) {
+    public static Matrix crossover(Matrix a, Matrix b) {
         Matrix matrix = new Matrix(a.rows, a.cols);
 
-        matrix.map((num, i, j) => {
+		matrix.map((num, i, j) => {
             double mut = 0;
+			int rnd = UnityEngine.Random.Range(0, 2);
 
             double elm1 = a.data[(int)i][(int)j];
             double elm2 = b.data[(int)i][(int)j];
 
-            if (elm1 > elm2) {
-                mut = UnityEngine.Random.Range((float)elm1, (float)elm2);
-            } else {
-                mut = UnityEngine.Random.Range((float)elm2, (float)elm1);
-            }
+            if (rnd == 0) {
+				mut = elm1;
+			} else {
+				mut = elm2;
+			}
 
             return mut;
         });
@@ -75,7 +76,28 @@ public class Matrix {
         return matrix;
     }
 
-    public static Matrix map(Matrix m, Func<double, double, double, double> func) {
+	public static Matrix mutation(Matrix a, Matrix b) {
+		Matrix matrix = new Matrix(a.rows, a.cols);
+
+		matrix.map((num, i, j) => {
+			double mut = 0;
+
+			double elm1 = a.data[(int)i][(int)j];
+			double elm2 = b.data[(int)i][(int)j];
+
+			if (elm1 > elm2) {
+				mut = elm1 * UnityEngine.Random.Range((float)elm1, (float)elm2);
+			} else {
+				mut = elm2 * UnityEngine.Random.Range((float)elm2, (float)elm1);
+			}
+
+			return mut;
+		});
+
+		return matrix;
+	}
+
+	public static Matrix map(Matrix m, Func<double, double, double, double> func) {
         Matrix matrix = new Matrix(m.rows, m.cols);
 
         matrix.data = m.data.Select((arr, i) => {
