@@ -9,6 +9,7 @@ TagManager:
   - Pipe
   - RemovePipe
   - Point
+  - Fall
   layers:
   - Default
   - TransparentFX

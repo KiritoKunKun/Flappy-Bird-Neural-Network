@@ -116,7 +116,31 @@ public class GameManager : MonoBehaviour {
     public void RestartGame() {
         birdsCount = 0;
 
-        
+        if (bestBirds[0] == null || bestBirds[0] == birdPrefab) {
+            bestBirds[0] = birdPrefab.GetComponent<Player>();
+            bestBirds[1] = birdPrefab.GetComponent<Player>();
+
+            bestBirds[0].nn = new RedeNeural(2, 3, 1);
+            bestBirds[1].nn = new RedeNeural(2, 3, 1);
+
+            bestBirds[0].nn.weights_ih.randomize();
+            bestBirds[1].nn.weights_ih.randomize();
+            bestBirds[0].nn.weights_ho.randomize();
+            bestBirds[1].nn.weights_ho.randomize();
+        }
+
+        for (int i = 0; i < pipes.Count; i++) {
+            pipes.RemoveAt(i);
+        }
+
+        GameObject[] pipesTemp = GameObject.FindGameObjectsWithTag("Pipe");
+        for (int i = 0; i < pipesTemp.Length; i++) {
+            Destroy(pipesTemp[i]);
+        }
+
+        timer = 2f;
+        GeneratePipes();
+
         RespawnBirds();
     }
 
@@ -125,6 +149,7 @@ public class GameManager : MonoBehaviour {
             birds[i].transform.position = new Vector3(Random.Range(-7f, -4f), Random.Range(-2f, 2f), 0);
             birds[i].GetComponent<SpriteRenderer>().enabled = true;
             birds[i].GetComponent<CircleCollider2D>().enabled = true;
+            birds[i].GetComponent<Player>().enabled = true;
             birds[i].GetComponent<Player>().distance = 0;
 
             RedeNeural birdNN = birds[i].GetComponent<Player>().nn;
@@ -132,8 +157,8 @@ public class GameManager : MonoBehaviour {
             //Mutation
             birdNN.weights_ih = Matrix.mutation(bestBirdsNN[0].weights_ih, bestBirdsNN[1].weights_ih);
             birdNN.weights_ho = Matrix.mutation(bestBirdsNN[0].weights_ho, bestBirdsNN[1].weights_ho);
-            birdNN.bias_ih = Matrix.mutation(bestBirdsNN[0].bias_ih, bestBirdsNN[1].bias_ih);
-            birdNN.bias_ho = Matrix.mutation(bestBirdsNN[0].bias_ho, bestBirdsNN[1].bias_ho);
+            //birdNN.bias_ih = Matrix.mutation(bestBirdsNN[0].bias_ih, bestBirdsNN[1].bias_ih);
+            //birdNN.bias_ho = Matrix.mutation(bestBirdsNN[0].bias_ho, bestBirdsNN[1].bias_ho);
         }
     }
 

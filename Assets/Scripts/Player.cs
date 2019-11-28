@@ -75,7 +75,8 @@ public class Player : MonoBehaviour {
     }
 
     private void OnTriggerEnter2D(Collider2D coll) {
-        if (coll.transform.parent.tag == "Pipe" && (coll.transform.name == "Up" || coll.transform.name == "Down")) {
+        if ((coll.transform.parent.tag == "Pipe" && (coll.transform.name == "Up" || coll.transform.name == "Down")) ||
+            coll.transform.tag == "Fall") {
             /*if (PlayerPrefs.HasKey("Distance")) {
                 if (PlayerPrefs.GetFloat("Distance") < distance) {
                     PlayerPrefs.SetFloat("Distance", distance);
@@ -98,14 +99,16 @@ public class Player : MonoBehaviour {
 
             gameManager.birdsCount++;
             if (gameManager.birdsCount >= 99) {
-                Debug.Log("Oii");
                 gameManager.RestartGame();
             }
 
             GetComponent<SpriteRenderer>().enabled = false;
             GetComponent<CircleCollider2D>().enabled = false;
+            enabled = false;
         }
+    }
 
+    private void OnTriggerStay2D(Collider2D coll) {
         if (coll.transform.tag == "Point") {
             distance++;
         }
