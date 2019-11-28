@@ -27,16 +27,26 @@ public class GameManager : MonoBehaviour {
     public static List<GameObject> pipes = new List<GameObject>();
     public static List<GameObject> birds = new List<GameObject>();
     public int birdsCount;
-    public RedeNeural bestBird;
+    public Player[] bestBirds;
+    public RedeNeural[] bestBirdsNN;
+    public double[] data00;
+    public double[] data01;
 
     // Start is called before the first frame update
     void Start() {
-        gameSpeed = 10f;
+        gameSpeed = 5f;
         train = true;
         timer = 2f;
         birdsCount = 0;
 
-        bestBird = new RedeNeural(2, 3, 1);
+        bestBirds = new Player[2];
+        bestBirds[0] = new Player();
+        bestBirds[1] = new Player();
+
+        bestBirdsNN = new RedeNeural[2];
+        bestBirdsNN[0] = new RedeNeural(2, 3, 1);
+        bestBirdsNN[1] = new RedeNeural(2, 3, 1);
+
         nn = new RedeNeural(2, 3, 1);
 
         //XOR Problem
@@ -62,6 +72,8 @@ public class GameManager : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
+        data00 = bestBirdsNN[0].weights_ih.data[0];
+        data01 = bestBirdsNN[0].weights_ih.data[1];
         GeneratePipes();
 
         if (pipes.Count > 0) {
@@ -77,13 +89,10 @@ public class GameManager : MonoBehaviour {
                 input[0] = distX;
                 input[1] = distY;
 
-                if (birdNN.predict(input)[0] > 0.0d) {
+                if (birdNN.predict(input)[0] > 0.85d) {
                     if (i == 0) {
-                        Debug.Log("Jump");
                     }
                     birds[i].GetComponent<Player>().Jump();
-                } else {
-                    Debug.Log("Oii");
                 }
             }
         }
@@ -107,23 +116,25 @@ public class GameManager : MonoBehaviour {
     public void RestartGame() {
         birdsCount = 0;
 
-        for (int i = 0; i < pipes.Count; i++) {
-            Destroy(pipes[i]);
-            i--;
-        }
+        
+        RespawnBirds();
+    }
 
-        GameObject[] pipesTemp = GameObject.FindGameObjectsWithTag("Pipe");
-
-        for (int i = 0; i < pipesTemp.Length; i++) {
-            Destroy(pipesTemp[i]);
-        }
-
+    private void RespawnBirds() {
         for (int i = 0; i < birds.Count; i++) {
-            Destroy(birds[i]);
-            birds.Remove(birds[i]);
-        }
+            birds[i].transform.position = new Vector3(Random.Range(-7f, -4f), Random.Range(-2f, 2f), 0);
+            birds[i].GetComponent<SpriteRenderer>().enabled = true;
+            birds[i].GetComponent<CircleCollider2D>().enabled = true;
+            birds[i].GetComponent<Player>().distance = 0;
 
-        GenerateBirds();
+            RedeNeural birdNN = birds[i].GetComponent<Player>().nn;
+
+            //Mutation
+            birdNN.weights_ih = Matrix.mutation(bestBirdsNN[0].weights_ih, bestBirdsNN[1].weights_ih);
+            birdNN.weights_ho = Matrix.mutation(bestBirdsNN[0].weights_ho, bestBirdsNN[1].weights_ho);
+            birdNN.bias_ih = Matrix.mutation(bestBirdsNN[0].bias_ih, bestBirdsNN[1].bias_ih);
+            birdNN.bias_ho = Matrix.mutation(bestBirdsNN[0].bias_ho, bestBirdsNN[1].bias_ho);
+        }
     }
 
     private void GenerateBirds() {
@@ -131,17 +142,14 @@ public class GameManager : MonoBehaviour {
             GameObject bird = Instantiate(birdPrefab);
 
             RedeNeural birdNN = bird.GetComponent<Player>().nn;
-            birdNN = bestBird;
 
-            //Matrix.randomizeWeights(birdNN.weights_ih);
-            //Matrix.randomizeWeights(birdNN.weights_ho);
-            birdNN.weights_ih.randomize();
-            birdNN.weights_ho.randomize();
-            birdNN.bias_ih.randomize();
-            birdNN.bias_ho.randomize();
+            //Mutation
+            birdNN.weights_ih = Matrix.mutation(bestBirdsNN[0].weights_ih, bestBirdsNN[1].weights_ih);
+            birdNN.weights_ho = Matrix.mutation(bestBirdsNN[0].weights_ho, bestBirdsNN[1].weights_ho);
+            birdNN.bias_ih = Matrix.mutation(bestBirdsNN[0].bias_ih, bestBirdsNN[1].bias_ih);
+            birdNN.bias_ho = Matrix.mutation(bestBirdsNN[0].bias_ho, bestBirdsNN[1].bias_ho);
 
             bird.transform.parent = birdsTransform;
-
             bird.transform.position = new Vector3(Random.Range(-8f, -5f), Random.Range(-2f, 2f), 0);
             birds.Add(bird);
         }

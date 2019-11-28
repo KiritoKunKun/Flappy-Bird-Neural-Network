@@ -7,7 +7,7 @@ public class Player : MonoBehaviour {
 
     public RedeNeural nn;
 
-    public float distance;
+    public int distance;
     public int generation;
     public float jumpForce;
 
@@ -23,14 +23,13 @@ public class Player : MonoBehaviour {
     private GameManager gameManager;
 
     void Awake() {
+        nn = new RedeNeural(2, 3, 1);
         rb = GetComponent<Rigidbody2D>();
         gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
     }
 
     // Start is called before the first frame update
     void Start() {
-        nn = new RedeNeural(2, 3, 1);
-
         jumpTimer = 0;
         distance = 0;
         canMove = true;
@@ -39,7 +38,6 @@ public class Player : MonoBehaviour {
     // Update is called once per frame
     void Update() {
         if (canMove) {
-            distance += Time.deltaTime;
             SetGravity();
             SetVelocity();
         }
@@ -77,23 +75,39 @@ public class Player : MonoBehaviour {
     }
 
     private void OnTriggerEnter2D(Collider2D coll) {
-        if (coll.transform.parent.tag == "Pipe") {
-            if (PlayerPrefs.HasKey("Distance")) {
+        if (coll.transform.parent.tag == "Pipe" && (coll.transform.name == "Up" || coll.transform.name == "Down")) {
+            /*if (PlayerPrefs.HasKey("Distance")) {
                 if (PlayerPrefs.GetFloat("Distance") < distance) {
-                    gameManager.bestBird = nn;
-
                     PlayerPrefs.SetFloat("Distance", distance);
                 }
             } else {
                 PlayerPrefs.SetFloat("Distance", distance);
+            }*/
+
+            if (distance > gameManager.bestBirds[0].distance) {
+                gameManager.bestBirds[0] = this;
+                gameManager.bestBirdsNN[0] = nn;
+                Debug.Log("Oii1");
+            } else if (distance > gameManager.bestBirds[1].distance) {
+                gameManager.bestBirds[1] = this;
+                gameManager.bestBirdsNN[1] = nn;
+                Debug.Log("Oii2");
             }
 
+            distance = 0;
+
             gameManager.birdsCount++;
-            if (gameManager.birdsCount == 100) {
+            if (gameManager.birdsCount >= 99) {
+                Debug.Log("Oii");
                 gameManager.RestartGame();
             }
 
             GetComponent<SpriteRenderer>().enabled = false;
+            GetComponent<CircleCollider2D>().enabled = false;
+        }
+
+        if (coll.transform.tag == "Point") {
+            distance++;
         }
     }
 }

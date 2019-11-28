@@ -32,7 +32,6 @@ public class RedeNeural {
 
         weights_ho = new Matrix(this.o_nodes, this.h_nodes);
         weights_ho.randomize();
-
         learning_rate = 0.1d;
     }
 

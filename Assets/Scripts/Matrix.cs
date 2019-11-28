@@ -54,14 +54,25 @@ public class Matrix {
         });
     }
 
-    public static Matrix randomizeWeights(Matrix m) {
-        Matrix mTemp = m;
+    public static Matrix mutation(Matrix a, Matrix b) {
+        Matrix matrix = new Matrix(a.rows, a.cols);
 
-        mTemp.map((num, i, j) => {
-            return UnityEngine.Random.Range(0f, 1f);
+        matrix.map((num, i, j) => {
+            double mut = 0;
+
+            double elm1 = a.data[(int)i][(int)j];
+            double elm2 = b.data[(int)i][(int)j];
+
+            if (elm1 > elm2) {
+                mut = UnityEngine.Random.Range((float)elm1, (float)elm2);
+            } else {
+                mut = UnityEngine.Random.Range((float)elm2, (float)elm1);
+            }
+
+            return mut;
         });
 
-        return multiply(m, mTemp);
+        return matrix;
     }
 
     public static Matrix map(Matrix m, Func<double, double, double, double> func) {
@@ -77,7 +88,7 @@ public class Matrix {
     }
 
     public Matrix map(Func<double, double, double, double> func) {
-        this.data = this.data.Select((arr, i) => {
+        data = data.Select((arr, i) => {
             return arr.Select((num, j) => {
                 return func(num, i, j);
             }).ToArray();
