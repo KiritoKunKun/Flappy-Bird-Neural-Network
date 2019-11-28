@@ -28,8 +28,8 @@ public class GameManager : MonoBehaviour {
     public static List<GameObject> pipes = new List<GameObject>();
     public static List<GameObject> birds = new List<GameObject>();
     public int birdsCount;
-    public Player[] bestBirds;
-    public RedeNeural[] bestBirdsNN;
+    public List<Player> bestBirds;
+    public List<RedeNeural> bestBirdsNN;
 	public float[] bestDistances;
 	public float[] totalDistances;
 	public float[] totalScores;
@@ -44,17 +44,17 @@ public class GameManager : MonoBehaviour {
         timer = 2f;
         birdsCount = 0;
 
-        bestBirds = new Player[4];
-        bestBirds[0] = new Player();
-        bestBirds[1] = new Player();
-		bestBirds[2] = new Player();
-		bestBirds[3] = new Player();
+		bestBirds = new List<Player>();
+        bestBirds.Add(new Player());
+		bestBirds.Add(new Player());
+		bestBirds.Add(new Player());
+		bestBirds.Add(new Player());
 
-		bestBirdsNN = new RedeNeural[4];
-        bestBirdsNN[0] = new RedeNeural(2, 6, 1);
-        bestBirdsNN[1] = new RedeNeural(2, 6, 1);
-		bestBirdsNN[2] = new RedeNeural(2, 6, 1);
-		bestBirdsNN[3] = new RedeNeural(2, 6, 1);
+		bestBirdsNN = new List<RedeNeural>();
+        bestBirdsNN.Add(new RedeNeural(2, 6, 1));
+		bestBirdsNN.Add(new RedeNeural(2, 6, 1));
+		bestBirdsNN.Add(new RedeNeural(2, 6, 1));
+		bestBirdsNN.Add(new RedeNeural(2, 6, 1));
 
 		bestDistances = new float[4] { 0, 0, 0, 0 };
 		totalDistances = new float[100];
@@ -86,8 +86,6 @@ public class GameManager : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        data00 = bestBirdsNN[0].weights_ih.data[0];
-        data01 = bestBirdsNN[0].weights_ih.data[1];
         GeneratePipes();
 
         if (pipes.Count > 0 && pipes[0] != null) {
@@ -115,7 +113,7 @@ public class GameManager : MonoBehaviour {
 		float[] bestFitness = new float[4];
 
 		for (int i = 0; i < birds.Count; i++) {
-			totalFitness[i] = totalScores[i] / totalDistances[i];
+			totalFitness[i] = totalScores[i] * totalDistances[i];
 		}
 
 		for (int i = 0; i < birds.Count; i++) {
@@ -127,20 +125,24 @@ public class GameManager : MonoBehaviour {
 		birds.Sort((a, b) => { return a.GetComponent<Player>().fitness.CompareTo(b.GetComponent<Player>().fitness); });
 
 		for (int i = 0; i < bestFitness.Length; i++) {
-			if (totalFitness[totalFitness.Length - 1 - i] > bestDistances[i]) {
-				bestFitness[i] = totalFitness[totalFitness.Length - 1 - i];
-				bestDistances[i] = bestFitness[i];
-			}
+			bestFitness[i] = totalFitness[totalFitness.Length - 1 - i];
+			bestDistances[i] = bestFitness[i];
 		}
-		
+
+		//Clear Birds
+		for (int i = 0; i < bestBirds.Count; i++) {
+			bestBirds.RemoveAt(i);
+			i--;
+		}
+
+		for (int i = 0; i < bestBirdsNN.Count; i++) {
+			bestBirdsNN.RemoveAt(i);
+			i--;
+		}
+
 		for (int i = birdsCount - 5; i < birds.Count; i++) {
-			for (int j = 0; j < bestFitness.Length; j++) {
-				if (birds[i].GetComponent<Player>().fitness > bestBirds[j].fitness) {
-					bestBirds[j] = birds[i].GetComponent<Player>();
-					bestBirdsNN[j] = birds[i].GetComponent<Player>().nn;
-					break;
-				}
-			}
+			bestBirds.Add(birds[i].GetComponent<Player>());
+			bestBirdsNN.Add(birds[i].GetComponent<Player>().nn);
 		}
 	}
 
@@ -166,7 +168,8 @@ public class GameManager : MonoBehaviour {
 
         for (int i = 0; i < pipes.Count; i++) {
             pipes.RemoveAt(i);
-        }
+			i--;
+		}
 
         GameObject[] pipesTemp = GameObject.FindGameObjectsWithTag("Pipe");
         for (int i = 0; i < pipesTemp.Length; i++) {
@@ -195,7 +198,7 @@ public class GameManager : MonoBehaviour {
 			birds[i].GetComponent<Player>().score = 0;
 			birds[i].GetComponent<Player>().fitness = 0;
 
-			for (int j = 0; j < bestBirds.Length; j++) {
+			for (int j = 0; j < bestBirds.Count; j++) {
 				if (birds[i] == bestBirds[j]) {
 					canMutate = false;
 				}

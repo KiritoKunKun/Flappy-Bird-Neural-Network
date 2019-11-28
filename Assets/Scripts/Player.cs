@@ -104,7 +104,7 @@ public class Player : MonoBehaviour {
 				}
 			}*/
 
-			fitness = score / distance;
+			fitness = score * distance;
 
 			GetComponent<SpriteRenderer>().enabled = false;
 			GetComponent<CircleCollider2D>().enabled = false;
