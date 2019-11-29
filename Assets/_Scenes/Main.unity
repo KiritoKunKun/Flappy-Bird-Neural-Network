@@ -381,10 +381,10 @@ RectTransform:
   m_Father: {fileID: 1275853886}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.046812505, y: 0.827}
-  m_AnchorMax: {x: 0.33547914, y: 0.97425926}
-  m_AnchoredPosition: {x: -1.1999512, y: 4.5}
-  m_SizeDelta: {x: 3.7999878, y: -7.200012}
+  m_AnchorMin: {x: 0.046812505, y: 0.83440745}
+  m_AnchorMax: {x: 0.45135415, y: 0.97425926}
+  m_AnchoredPosition: {x: -1.699997, y: 0.5}
+  m_SizeDelta: {x: 2.699997, y: 0.8000002}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &440558268
 MonoBehaviour:
@@ -419,7 +419,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Score: 0'
+  m_Text: 'Best Fitness: 0'
 --- !u!222 &440558269
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -786,12 +786,9 @@ MonoBehaviour:
   birdsCount: 0
   bestBirdEver: {fileID: 0}
   bestBirds: []
-  bestDistances: []
   totalDistances: []
   totalScores: []
   totalFitness: []
-  data00: []
-  data01: []
   scoreText: {fileID: 440558268}
 --- !u!4 &1457832167
 Transform:

@@ -58,22 +58,25 @@ public class Player : MonoBehaviour {
 			distance += GameManager.gameSpeed;
             SetGravity();
             SetVelocity();
+
+            if (score > gameManager.bestBirdEver.score) {
+                gameManager.bestBirdEver = this;
+            }
+            gameManager.DisplayScore();
         }
     }
 
     public void Jump() {
-        // if (Input.GetKeyDown(KeyCode.Space)) {
-            jumpTimer += Time.deltaTime;
+        jumpTimer += Time.deltaTime;
 
-            if (jumpTimer > 0.1f) {
-                if (transform.position.y < 4) {
-                    rb.velocity += new Vector2(rb.velocity.x, 0);
-                    rb.velocity += Vector2.up * jumpForce;
-                }
-
-                jumpTimer = 0;
+        if (jumpTimer > 0.1f) {
+            if (transform.position.y < 4) {
+                rb.velocity += new Vector2(rb.velocity.x, 0);
+                rb.velocity += Vector2.up * jumpForce;
             }
-        // }
+
+            jumpTimer = 0;
+        }
     }
 
     private void SetGravity() {
@@ -95,19 +98,13 @@ public class Player : MonoBehaviour {
     private void OnTriggerEnter2D(Collider2D coll) {
         if ((coll.transform.parent.tag == "Pipe" && (coll.transform.name == "Up" || coll.transform.name == "Down")) ||
             coll.transform.tag == "Fall") {
-            //fitness = score * distance;
             fitness = distance - ((GameManager.pipes[0].transform.GetChild(2).transform.position.x - transform.position.x) + Mathf.Abs(GameManager.pipes[0].transform.GetChild(2).transform.position.y - transform.position.y));
 
-            if (PlayerPrefs.HasKey("BestFitness")) {
-                if (fitness > PlayerPrefs.GetFloat("BestFitness")) {
-                    PlayerPrefs.SetFloat("BestFitness", fitness);
-                    gameManager.bestBirdEver = this;
-                }
-            } else {
-                PlayerPrefs.SetFloat("BestFitness", fitness);
+            if (fitness > gameManager.bestBirdEver.fitness) {
+                gameManager.bestBirdEver = this;
             }
 
-			GetComponent<SpriteRenderer>().enabled = false;
+            GetComponent<SpriteRenderer>().enabled = false;
 			GetComponent<CircleCollider2D>().enabled = false;
 			enabled = false;
 
@@ -119,7 +116,6 @@ public class Player : MonoBehaviour {
 
 		if (coll.transform.tag == "Point") {
 			score++;
-			gameManager.DisplayScore();
 		}
 	}
 }
