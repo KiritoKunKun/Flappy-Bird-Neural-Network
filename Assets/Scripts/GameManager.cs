@@ -29,6 +29,7 @@ public class GameManager : MonoBehaviour {
     public static List<GameObject> pipes = new List<GameObject>();
     public static List<GameObject> birds = new List<GameObject>();
     public int birdsCount;
+    public Player bestBirdEver;
     public List<Player> bestBirds;
     public List<RedeNeural> bestBirdsNN;
 	public float[] bestDistances;
@@ -47,7 +48,9 @@ public class GameManager : MonoBehaviour {
         timer = 2f;
         birdsCount = 0;
 
-		bestBirds = new List<Player>();
+        bestBirdEver = new Player();
+
+        bestBirds = new List<Player>();
         bestBirds.Add(new Player());
 		bestBirds.Add(new Player());
 		bestBirds.Add(new Player());
@@ -123,8 +126,10 @@ public class GameManager : MonoBehaviour {
 		float[] bestFitness = new float[4];
 
 		for (int i = 0; i < birds.Count; i++) {
-			totalFitness[i] = totalScores[i] * totalDistances[i];
-		}
+            //totalFitness[i] = totalScores[i] * totalDistances[i];
+            //totalFitness[i] = totalDistances[i] - (pipes[0].transform.GetChild(2).transform.position.x - birds[i].transform.position.x);
+            totalFitness[i] = birds[i].GetComponent<Player>().fitness;
+        }
 
 		for (int i = 0; i < birds.Count; i++) {
 			totalDistances[i] = birds[i].GetComponent<Player>().distance;
@@ -164,7 +169,7 @@ public class GameManager : MonoBehaviour {
             pipe.transform.parent = pipesTransform;
 
             float rndY = UnityEngine.Random.Range(-2f, 2f);
-            pipe.transform.position = new Vector3(10, rndY, 0);
+            pipe.transform.position = new Vector3(10, 0, 0);
             pipes.Add(pipe);
 
             timer = 0f;
@@ -217,33 +222,26 @@ public class GameManager : MonoBehaviour {
 			if (canMutate) {
 				RedeNeural birdNN = birds[i].GetComponent<Player>().nn;
 
-				int rnd = UnityEngine.Random.Range(0, 5);
+				float rnd = UnityEngine.Random.Range(0f, 100f);
 
-				if (rnd == 0) {
-					birdNN.weights_ih.randomize();
-					birdNN.weights_ho.randomize();
-					birdNN.bias_ih.randomize();
-					birdNN.bias_ho.randomize();
-				} else {
-					int rnd1 = UnityEngine.Random.Range(0, 4);
-					int rnd2 = UnityEngine.Random.Range(0, 4);
+                int rnd1 = UnityEngine.Random.Range(0, 2);
+                int rnd2 = UnityEngine.Random.Range(0, 2);
 
-					while (rnd2 == rnd1) {
-						rnd2 = UnityEngine.Random.Range(0, 4);
-					}
+                while (rnd2 == rnd1) {
+                    rnd2 = UnityEngine.Random.Range(0, 2);
+                }
 
-					//Crossover
-					birdNN.weights_ih = Matrix.crossover(bestBirdsNN[rnd1].weights_ih, bestBirdsNN[rnd2].weights_ih);
-					birdNN.weights_ho = Matrix.crossover(bestBirdsNN[rnd1].weights_ho, bestBirdsNN[rnd2].weights_ho);
-					//birdNN.bias_ih = Matrix.crossover(bestBirdsNN[rnd1].bias_ih, bestBirdsNN[rnd2].bias_ih);
-					//birdNN.bias_ho = Matrix.crossover(bestBirdsNN[rnd1].bias_ho, bestBirdsNN[rnd2].bias_ho);
-
-					//Mutation
-					birdNN.weights_ih = Matrix.mutation(bestBirdsNN[rnd1].weights_ih, bestBirdsNN[rnd2].weights_ih);
-					birdNN.weights_ho = Matrix.mutation(bestBirdsNN[rnd1].weights_ho, bestBirdsNN[rnd2].weights_ho);
-					//birdNN.bias_ih = Matrix.escalarMultiply(birdNN.weights_ih, UnityEngine.Random.Range(0f, 1f));
-					//birdNN.bias_ho = Matrix.escalarMultiply(birdNN.weights_ho, UnityEngine.Random.Range(0f, 1f));
-				}
+                if (rnd < 63f) {
+					birdNN = bestBirdsNN[0];
+				} else if (rnd >= 63f && rnd <= 69) {
+                    //Mutation
+                    birdNN.weights_ih = Matrix.mutation(bestBirdsNN[rnd1].weights_ih, bestBirdsNN[rnd2].weights_ih);
+                    birdNN.weights_ho = Matrix.mutation(bestBirdsNN[rnd1].weights_ho, bestBirdsNN[rnd2].weights_ho);
+                } else {
+                    //Crossover
+                    birdNN.weights_ih = Matrix.crossover(bestBirdsNN[rnd1].weights_ih, bestBirdsNN[rnd2].weights_ih);
+                    birdNN.weights_ho = Matrix.crossover(bestBirdsNN[rnd1].weights_ho, bestBirdsNN[rnd2].weights_ho);
+                }
 			}
         }
     }
