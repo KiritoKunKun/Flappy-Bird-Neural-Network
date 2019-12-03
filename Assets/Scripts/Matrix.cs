@@ -31,7 +31,7 @@ public class Matrix {
     public static Matrix arrayToMatrix(double[] arr) {
         Matrix matrix = new Matrix(arr.Length, 1);
         matrix.map((num, i, j) => {
-            return arr[(int)i]; //HERE #############
+            return arr[(int)i];
         });
 
         return matrix;
@@ -78,21 +78,40 @@ public class Matrix {
 
 	public static Matrix mutation(Matrix a, Matrix b) {
 		Matrix matrix = new Matrix(a.rows, a.cols);
+        int rndMut = UnityEngine.Random.Range(0, 3);
+        int rowIndex = UnityEngine.Random.Range(0, a.rows);
+        int colIndex = UnityEngine.Random.Range(0, a.cols);
 
-		matrix.map((num, i, j) => {
-			double mut = 0;
+        matrix.map((num, i, j) => {
+            double mut = a.data[(int)i][(int)j];
 
-			double elm1 = a.data[(int)i][(int)j];
-			double elm2 = b.data[(int)i][(int)j];
+            if ((int)i == rowIndex && (int)j == colIndex) {
+                switch (rndMut) {
+                    case 0:
+                        double elm1 = a.data[(int)i][(int)j];
+                        double elm2 = b.data[(int)i][(int)j];
 
-			if (elm1 > elm2) {
-				mut = elm1 * UnityEngine.Random.Range((float)elm1, (float)elm2);
-			} else {
-				mut = elm2 * UnityEngine.Random.Range((float)elm2, (float)elm1);
-			}
+                        if (elm1 > elm2) {
+                            mut = elm1 * UnityEngine.Random.Range((float)elm1, (float)elm2);
+                        } else {
+                            mut = elm2 * UnityEngine.Random.Range((float)elm2, (float)elm1);
+                        }
+                        break;
+                    case 1:
+                        mut = UnityEngine.Random.Range(-10f, 10f); // Random Value Multiply
+                        if (mut > 1000f) mut = 1000f;
+                        if (mut < -1000f) mut = -1000f;
+                        break;
+                    case 2:
+                        mut += UnityEngine.Random.Range(-1000f, 1000f); // Random Value Sum
+                        if (mut > 1000f) mut = 1000f;
+                        if (mut < -1000f) mut = -1000f;
+                        break;
+                }
+            }
 
-			return mut;
-		});
+            return mut;
+        });
 
 		return matrix;
 	}

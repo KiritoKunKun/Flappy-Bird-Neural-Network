@@ -40,7 +40,7 @@ public class Player : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update() {
+    void FixedUpdate() {
         if (canMove) {
 			if (transform.position.y < -10f) {
 				fitness = score / distance;
@@ -72,7 +72,7 @@ public class Player : MonoBehaviour {
         if (jumpTimer > 0.1f) {
             if (transform.position.y < 4) {
                 rb.velocity += new Vector2(rb.velocity.x, 0);
-                rb.velocity += Vector2.up * jumpForce;
+                transform.position += new Vector3(0, 2f, 0);
             }
 
             jumpTimer = 0;

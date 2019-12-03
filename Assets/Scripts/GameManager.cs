@@ -89,11 +89,6 @@ public class GameManager : MonoBehaviour {
     }
 
 	public void DisplayScore() {
-        /*birds.Sort((a, b) => { return a.GetComponent<Player>().score.CompareTo(b.GetComponent<Player>().score); });
-		for (int i = 0; i < birds.Count; i++) {
-			scoreText.text = "Score: " + birds[birds.Count - 1].GetComponent<Player>().score;
-		}*/
-
         scoreText.text = "Score: " + bestBirdEver.score;
     }
 
@@ -132,7 +127,7 @@ public class GameManager : MonoBehaviour {
 			i--;
 		}
 
-		for (int i = birdsCount - 5; i < birds.Count; i++) {
+		for (int i = birdsCount - 4; i < birds.Count; i++) {
 			bestBirds.Add(birds[i].GetComponent<Player>());
 			bestBirdsNN.Add(birds[i].GetComponent<Player>().nn);
 		}
@@ -198,38 +193,20 @@ public class GameManager : MonoBehaviour {
 
 				float rnd = UnityEngine.Random.Range(0f, 100f);
 
-                int rnd1 = UnityEngine.Random.Range(0, 2);
-                int rnd2 = UnityEngine.Random.Range(0, 2);
+                birdNN = bestBirdsNN[0];
 
-                while (rnd2 == rnd1) {
-                    rnd2 = UnityEngine.Random.Range(0, 2);
+                if (rnd < 5f) {
+                    // Mutation
+                    birdNN.weights_ih = Matrix.mutation(bestBirdsNN[0].weights_ih, bestBirdsNN[1].weights_ih);
+                    birdNN.weights_ho = Matrix.mutation(bestBirdsNN[0].weights_ho, bestBirdsNN[1].weights_ho);
+                    Debug.Log(birdNN.weights_ih.data[0][0]);
+                } else if (rnd < 10f) {
+                    // Crossover
+                    birdNN.weights_ih = Matrix.crossover(bestBirdsNN[0].weights_ih, bestBirdsNN[1].weights_ih);
+                    birdNN.weights_ho = Matrix.crossover(bestBirdsNN[0].weights_ho, bestBirdsNN[1].weights_ho);
                 }
 
-                if (rnd < 70f) {
-					birdNN = bestBirdsNN[0];
-				} else if (rnd >= 70f && rnd <= 73f) {
-                    //Mutation
-                    float rndMut = UnityEngine.Random.Range(0, 100);
-
-                    if (rndMut < 70f) {
-                        birdNN.weights_ih = Matrix.mutation(bestBirdsNN[rnd1].weights_ih, bestBirdsNN[rnd2].weights_ih);
-                        birdNN.weights_ho = Matrix.mutation(bestBirdsNN[rnd1].weights_ho, bestBirdsNN[rnd2].weights_ho);
-                    } else {
-                        birdNN.weights_ih = Matrix.mutation(bestBirdsNN[0].weights_ih, bestBirdsNN[1].weights_ih);
-                        birdNN.weights_ho = Matrix.mutation(bestBirdsNN[0].weights_ho, bestBirdsNN[1].weights_ho);
-                    }
-                } else {
-                    //Crossover
-                    float rndCross = UnityEngine.Random.Range(0, 100);
-
-                    if (rndCross < 70f) {
-                        birdNN.weights_ih = Matrix.crossover(bestBirdsNN[0].weights_ih, bestBirdsNN[1].weights_ih);
-                        birdNN.weights_ho = Matrix.crossover(bestBirdsNN[0].weights_ho, bestBirdsNN[1].weights_ho);
-                    } else {
-                        birdNN.weights_ih = Matrix.crossover(bestBirdsNN[rnd1].weights_ih, bestBirdsNN[rnd2].weights_ih);
-                        birdNN.weights_ho = Matrix.crossover(bestBirdsNN[rnd1].weights_ho, bestBirdsNN[rnd2].weights_ho);
-                    }
-                }
+                birds[i].GetComponent<Player>().nn = birdNN;
 			}
         }
     }
