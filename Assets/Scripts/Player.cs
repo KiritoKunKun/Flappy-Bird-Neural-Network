@@ -72,6 +72,7 @@ public class Player : MonoBehaviour {
         if (jumpTimer > 0.1f) {
             if (transform.position.y < 4) {
                 rb.velocity += new Vector2(rb.velocity.x, 0);
+                // rb.velocity += new Vector2(0, jumpForce);
                 transform.position += new Vector3(0, 2f, 0);
             }
 

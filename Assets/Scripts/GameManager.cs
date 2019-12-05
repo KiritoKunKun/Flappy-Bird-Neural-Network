@@ -199,7 +199,6 @@ public class GameManager : MonoBehaviour {
                     // Mutation
                     birdNN.weights_ih = Matrix.mutation(bestBirdsNN[0].weights_ih, bestBirdsNN[1].weights_ih);
                     birdNN.weights_ho = Matrix.mutation(bestBirdsNN[0].weights_ho, bestBirdsNN[1].weights_ho);
-                    Debug.Log(birdNN.weights_ih.data[0][0]);
                 } else if (rnd < 10f) {
                     // Crossover
                     birdNN.weights_ih = Matrix.crossover(bestBirdsNN[0].weights_ih, bestBirdsNN[1].weights_ih);
