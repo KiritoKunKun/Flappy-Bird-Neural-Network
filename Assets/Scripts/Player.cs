@@ -25,7 +25,8 @@ public class Player : MonoBehaviour {
     private GameManager gameManager;
 
     void Awake() {
-        nn = new RedeNeural(2, 6, 1);
+        // nn = new RedeNeural(2, 6, 1);
+        nn = gameObject.AddComponent<RedeNeural>();
         rb = GetComponent<Rigidbody2D>();
         gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
     }

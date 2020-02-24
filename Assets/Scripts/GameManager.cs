@@ -193,7 +193,8 @@ public class GameManager : MonoBehaviour {
 
 				float rnd = UnityEngine.Random.Range(0f, 100f);
 
-                birdNN = bestBirdsNN[0];
+                if (bestBirdsNN[0])
+                    birdNN = Instantiate(bestBirdsNN[0]);
 
                 if (rnd < 5f) {
                     // Mutation
@@ -206,6 +207,8 @@ public class GameManager : MonoBehaviour {
                 }
 
                 birds[i].GetComponent<Player>().nn = birdNN;
+                // Debug.Log(birdNN.weights_ho.data[0][0]);
+                // Debug.Log(bestBirdsNN[0].weights_ho.data[0][0]);
 			}
         }
     }

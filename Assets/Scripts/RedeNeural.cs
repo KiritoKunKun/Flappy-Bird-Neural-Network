@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RedeNeural {
+public class RedeNeural : MonoBehaviour {
     
     private int i_nodes;
     private int h_nodes;
@@ -31,6 +31,24 @@ public class RedeNeural {
         weights_ih.randomize();
 
         weights_ho = new Matrix(this.o_nodes, this.h_nodes);
+        weights_ho.randomize();
+        learning_rate = 0.1d;
+    }
+    private void Awake() {
+        i_nodes = 2;
+        h_nodes = 6;
+        o_nodes = 1;
+
+        bias_ih = new Matrix(h_nodes, 1);
+        bias_ih.randomize();
+        
+        bias_ho = new Matrix(o_nodes, 1);
+        bias_ho.randomize();
+
+        weights_ih = new Matrix(h_nodes, i_nodes);
+        weights_ih.randomize();
+
+        weights_ho = new Matrix(o_nodes, h_nodes);
         weights_ho.randomize();
         learning_rate = 0.1d;
     }
